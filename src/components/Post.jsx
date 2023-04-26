@@ -12,7 +12,7 @@ export function Post() {
           </div>
         </div>
 
-        <time title="25 de abril às 21:10h" dateTime="2023-04-04"></time>
+        <time title="25 de abril às 21:10h" dateTime="2023-04-04">Publicado a 1h</time>
       </header>
 
       <div className={styles.content}>
