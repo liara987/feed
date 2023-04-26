@@ -1,5 +1,6 @@
 import { Header } from "./components/Header";
 import { Sidebar } from "./components/Sidebar";
+import { Post } from "./components/Post";
 
 import style from "./App.module.css";
 import "./global.css";
@@ -12,10 +13,8 @@ function App() {
         <Sidebar />
 
         <main>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio id
-          consectetur voluptate quo enim accusantium eius? Tenetur natus
-          perferendis ea necessitatibus praesentium quisquam. Corporis
-          distinctio iusto voluptatem veniam placeat voluptatum?
+          <Post/>
+          <Post/>
         </main>
       </div>
     </>
