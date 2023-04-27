@@ -13,7 +13,12 @@
   html {
     font-size: 87.5%;
   }
+
   .wrapper {
     grid-template-columns: 1fr;
+  }
+
+  body {
+    width: fit-content;
   }
 }
