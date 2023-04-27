@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ChangeEvent, FormEvent, InvalidEvent, useState } from "react";
 import { Avatar } from "./Avatar";
 import { Comment } from "./Comment";
 import { format, formatDistanceToNow } from "date-fns";
@@ -6,7 +6,29 @@ import ptBR from "date-fns/locale/pt-BR";
 
 import styles from "./Post.module.css";
 
-export function Post({ author, content, publishedAt }) {
+interface Author {
+  name: string;
+  role: string;
+  avatarUrl: string;
+}
+
+export interface PostType {
+  id: number;
+  author: Author;
+  content: Content[];
+  publishedAt: Date;
+}
+
+interface PostProps {
+  post: PostType;
+}
+
+interface Content {
+  type: "paragraph" | "link";
+  content: string;
+}
+
+export function Post({ post }: PostProps) {
   const [comments, setComments] = useState([
     "Just posted a new project to my profile, checkitout",
   ]);
@@ -14,28 +36,29 @@ export function Post({ author, content, publishedAt }) {
   const [newCommentText, setNewCommentText] = useState("");
 
   const datePublishedFormatted = format(
-    publishedAt,
+    post.publishedAt,
     "d 'de' LLLL 'às' HH:mm'h'",
     { locale: ptBR }
   );
 
-  const publishedRelativeToNow = formatDistanceToNow(publishedAt, {
+  const publishedRelativeToNow = formatDistanceToNow(post.publishedAt, {
     locale: ptBR,
     addSuffix: true,
   });
 
-  function heandleNewComments() {
+  function handleNewComments(event: FormEvent) {
     event.preventDefault();
 
     setComments([...comments, newCommentText]);
     setNewCommentText("");
   }
 
-  function heandleNewCommentChange() {
+  function handleNewCommentChange(event: ChangeEvent<HTMLTextAreaElement>) {
+    event.target.setCustomValidity("");
     setNewCommentText(event.target.value);
   }
 
-  function deleteComment(commentToDelete) {
+  function deleteComment(commentToDelete: string) {
     const newCommentsWithoutDeletedOne = comments.filter((comment) => {
       return comment !== commentToDelete;
     });
@@ -43,7 +66,7 @@ export function Post({ author, content, publishedAt }) {
     setComments(newCommentsWithoutDeletedOne);
   }
 
-  function handleInvalidNewComment() {
+  function handleInvalidNewComment(event: InvalidEvent<HTMLTextAreaElement>) {
     event.target.setCustomValidity("Por favor digite algo");
   }
 
@@ -53,23 +76,23 @@ export function Post({ author, content, publishedAt }) {
     <article className={styles.post}>
       <header>
         <div className={styles.author}>
-          <Avatar src={author.avatarUrl} />
+          <Avatar src={post.author.avatarUrl} />
           <div className={styles.authorInfo}>
-            <strong>{author.name}</strong>
-            <span>{author.role}</span>
+            <strong>{post.author.name}</strong>
+            <span>{post.author.role}</span>
           </div>
         </div>
 
         <time
           title={datePublishedFormatted}
-          dateTime={publishedAt.toISOString()}
+          dateTime={post.publishedAt.toISOString()}
         >
           {publishedRelativeToNow}
         </time>
       </header>
 
       <div className={styles.content}>
-        {content.map((item) => {
+        {post.content.map((item) => {
           if (item.type === "paragraph") {
             return <p key={item.content}>{item.content}</p>;
           } else if (item.type === "link") {
@@ -82,12 +105,12 @@ export function Post({ author, content, publishedAt }) {
         })}
       </div>
 
-      <form onSubmit={heandleNewComments} className={styles.commentForm}>
+      <form onSubmit={handleNewComments} className={styles.commentForm}>
         <strong>Deixe seu feedback</strong>
         <textarea
           name="comment"
           placeholder="Deixe um comentario"
-          onChange={heandleNewCommentChange}
+          onChange={handleNewCommentChange}
           value={newCommentText}
           required
           onInvalid={handleInvalidNewComment}
