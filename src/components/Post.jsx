@@ -43,6 +43,12 @@ export function Post({ author, content, publishedAt }) {
     setComments(newCommentsWithoutDeletedOne);
   }
 
+  function handleInvalidNewComment() {
+    event.target.setCustomValidity("Por favor digite algo");
+  }
+
+  const newCommentIsEmpity = newCommentText.length === 0;
+
   return (
     <article className={styles.post}>
       <header>
@@ -83,10 +89,14 @@ export function Post({ author, content, publishedAt }) {
           placeholder="Deixe um comentario"
           onChange={heandleNewCommentChange}
           value={newCommentText}
+          required
+          onInvalid={handleInvalidNewComment}
         />
 
         <footer>
-          <button type="submit">Comentar</button>
+          <button type="submit" disabled={newCommentIsEmpity}>
+            Comentar
+          </button>
         </footer>
       </form>
 
