@@ -7,7 +7,11 @@ import ptBR from "date-fns/locale/pt-BR";
 import styles from "./Post.module.css";
 
 export function Post({ author, content, publishedAt }) {
-  const [comments, setComments] = useState([1, 2]);
+  const [comments, setComments] = useState([
+    "Just posted a new project to my profile, checkitout",
+  ]);
+
+  const [newCommentText, setNewCommentText] = useState("");
 
   const datePublishedFormatted = format(
     publishedAt,
@@ -23,7 +27,20 @@ export function Post({ author, content, publishedAt }) {
   function heandleNewComments() {
     event.preventDefault();
 
-    setComments([...comments, comments.length + 1]);
+    setComments([...comments, newCommentText]);
+    setNewCommentText("");
+  }
+
+  function heandleNewCommentChange() {
+    setNewCommentText(event.target.value);
+  }
+
+  function deleteComment(commentToDelete) {
+    const newCommentsWithoutDeletedOne = comments.filter((comment) => {
+      return comment !== commentToDelete;
+    });
+
+    setComments(newCommentsWithoutDeletedOne);
   }
 
   return (
@@ -48,10 +65,10 @@ export function Post({ author, content, publishedAt }) {
       <div className={styles.content}>
         {content.map((item) => {
           if (item.type === "paragraph") {
-            return <p>{item.content}</p>;
+            return <p key={item.content}>{item.content}</p>;
           } else if (item.type === "link") {
             return (
-              <p>
+              <p key={item.content}>
                 <a href={item.content}>{item.content}</a>
               </p>
             );
@@ -61,7 +78,12 @@ export function Post({ author, content, publishedAt }) {
 
       <form onSubmit={heandleNewComments} className={styles.commentForm}>
         <strong>Deixe seu feedback</strong>
-        <textarea placeholder="Deixe um comentario" />
+        <textarea
+          name="comment"
+          placeholder="Deixe um comentario"
+          onChange={heandleNewCommentChange}
+          value={newCommentText}
+        />
 
         <footer>
           <button type="submit">Comentar</button>
@@ -70,7 +92,13 @@ export function Post({ author, content, publishedAt }) {
 
       <div className={styles.commentList}>
         {comments.map((comment) => {
-          return <Comment />;
+          return (
+            <Comment
+              key={comment}
+              content={comment}
+              onDeleteComment={deleteComment}
+            />
+          );
         })}
       </div>
     </article>
