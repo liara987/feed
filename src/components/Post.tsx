@@ -2,11 +2,11 @@ import { ChangeEvent, FormEvent, InvalidEvent, useState } from "react";
 import { Avatar } from "./Avatar";
 import { Comment } from "./Comment";
 import { format, formatDistanceToNow } from "date-fns";
-import ptBR from "date-fns/locale/pt-BR";
+import enUS from "date-fns/locale/en-US";
 
 import styles from "./Post.module.css";
 
-interface Author {
+export interface Author {
   name: string;
   role: string;
   avatarUrl: string;
@@ -37,12 +37,12 @@ export function Post({ post }: PostProps) {
 
   const datePublishedFormatted = format(
     post.publishedAt,
-    "d 'de' LLLL 'às' HH:mm'h'",
-    { locale: ptBR }
+    "d',' LLLL 'at' HH:mm'h'",
+    { locale: enUS }
   );
 
   const publishedRelativeToNow = formatDistanceToNow(post.publishedAt, {
-    locale: ptBR,
+    locale: enUS,
     addSuffix: true,
   });
 
@@ -67,7 +67,7 @@ export function Post({ post }: PostProps) {
   }
 
   function handleInvalidNewComment(event: InvalidEvent<HTMLTextAreaElement>) {
-    event.target.setCustomValidity("Por favor digite algo");
+    event.target.setCustomValidity("Please type something");
   }
 
   const newCommentIsEmpity = newCommentText.length === 0;
@@ -106,10 +106,10 @@ export function Post({ post }: PostProps) {
       </div>
 
       <form onSubmit={handleNewComments} className={styles.commentForm}>
-        <strong>Deixe seu feedback</strong>
+        <strong>Give your feedback</strong>
         <textarea
           name="comment"
-          placeholder="Deixe um comentario"
+          placeholder="Let your comment here"
           onChange={handleNewCommentChange}
           value={newCommentText}
           required
@@ -118,7 +118,7 @@ export function Post({ post }: PostProps) {
 
         <footer>
           <button type="submit" disabled={newCommentIsEmpity}>
-            Comentar
+            Comment
           </button>
         </footer>
       </form>
@@ -129,6 +129,9 @@ export function Post({ post }: PostProps) {
             <Comment
               key={comment}
               content={comment}
+              author={post.author}
+              date={post.publishedAt}
+              dateFormated={datePublishedFormatted}
               onDeleteComment={deleteComment}
             />
           );
